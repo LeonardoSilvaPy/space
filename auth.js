@@ -187,7 +187,10 @@ async function forgotPassword() {
 
     await sendPasswordResetEmail(auth, email);
 
-    msg.innerText = "Email de recuperação enviado!";
+    msg.innerText =
+      "Email de recuperação enviado!\n" +
+      "Caso não encontre, verifique a pasta Spam";
+
     msg.className = "success";
 
   } catch (err) {
