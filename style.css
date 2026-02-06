@@ -14,8 +14,13 @@ body {
   border-radius: 16px;
   width: 500px;
   max-width: 95%; 
-  min-height: 420px;
+  min-height: 360px;
   text-align: center;
+}
+
+.box-home {
+  min-height: 220px;
+  padding: 35px;
 }
 
 input {
@@ -43,15 +48,21 @@ button:hover {
 }
 
 
+.error,
+.success {
+  color: inherit;
+  margin-top: 15px;
+  margin-bottom: 25px;
+}
+
 .error {
   color: #ef4444;
-  margin-top: 10px;
 }
 
 .success {
   color: #22c55e;
-  margin-top: 10px;
 }
+
 
 .btn-secondary {
   background: transparent;
@@ -117,6 +128,12 @@ button:hover {
     flex-direction: column;
     justify-content: center;
   }
+
+  .box-home {
+  height: auto;
+  min-height: 180px;
+  justify-content: center;
+}
 
   h1, h2 {
     font-size: 26px;
