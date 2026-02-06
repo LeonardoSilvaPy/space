@@ -233,4 +233,4 @@ onAuthStateChanged(auth, async user => {
 window.login = login;
 window.register = register;
 window.logout = logout;
-window.logout = forgotPassword;
+window.forgotPassword = forgotPassword;
