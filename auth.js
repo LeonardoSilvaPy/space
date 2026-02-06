@@ -123,13 +123,3 @@ onAuthStateChanged(auth, user => {
   }
 
 });
-
-
-  if (guest && userBox) {
-
-    guest.style.display = "none";
-    userBox.style.display = "block";
-
-    welcome.innerText = "Bem-vindo, " + user.email;
-  }
-});
