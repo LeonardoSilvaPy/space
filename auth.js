@@ -10,6 +10,18 @@ import {
 } from
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  query,
+  where,
+  getDocs,
+  collection
+} from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyD8nX_cGZHHXB07IicXoNw2U2gbD_00cHY",
@@ -20,106 +32,150 @@ const firebaseConfig = {
   appId: "1:455628678631:web:0725827e5f19ea48f04942"
 };
 
-
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 
-function emailInput() {
-  return document.getElementById("email")?.value;
+function get(id) {
+  return document.getElementById(id)?.value;
 }
 
-function passwordInput() {
-  return document.getElementById("password")?.value;
-}
+window.register = async function () {
 
-
-window.register = function () {
-
-  const email = emailInput();
-  const password = passwordInput();
-
+  const nickname = get("nickname");
+  const email = get("email");
+  const password = get("password");
   const msg = document.getElementById("msg");
 
-  if (!email || !password) {
+  if (!nickname || !email || !password) {
     msg.innerText = "Preencha todos os campos";
     msg.className = "error";
     return;
   }
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
+  try {
 
-      msg.innerText = "Cadastro realizado!";
-      msg.className = "success";
+    const q = query(
+      collection(db, "users"),
+      where("nickname", "==", nickname)
+    );
 
-      setTimeout(() => {
-        location.href = "index.html";
-      }, 1200);
+    const snap = await getDocs(q);
 
-    })
-    .catch(err => {
-
-      msg.innerText = err.message;
+    if (!snap.empty) {
+      msg.innerText = "Usuário já existe";
       msg.className = "error";
+      return;
+    }
 
+    const cred = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    await setDoc(doc(db, "users", cred.user.uid), {
+      uid: cred.user.uid,
+      email,
+      nickname,
+      createdAt: Date.now()
     });
+
+    msg.innerText = "Cadastro realizado!";
+    msg.className = "success";
+
+    setTimeout(() => {
+      location.href = "index.html";
+    }, 1200);
+
+  } catch (err) {
+
+    msg.innerText = err.message;
+    msg.className = "error";
+  }
 };
 
 
-window.login = function () {
+window.login = async function () {
 
-  const email = emailInput();
-  const password = passwordInput();
+  const login = get("login");
+  const password = get("password");
 
   const msg = document.getElementById("msg");
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      location.href = "index.html";
-    })
-    .catch(() => {
+  if (!login || !password) {
+    msg.innerText = "Preencha tudo";
+    msg.className = "error";
+    return;
+  }
 
-      msg.innerText = "Email ou senha inválidos";
-      msg.className = "error";
+  try {
 
-    });
+    let email = login;
+
+    if (!login.includes("@")) {
+
+      const q = query(
+        collection(db, "users"),
+        where("nickname", "==", login)
+      );
+
+      const snap = await getDocs(q);
+
+      if (snap.empty) {
+        msg.innerText = "Usuário não encontrado";
+        msg.className = "error";
+        return;
+      }
+
+      email = snap.docs[0].data().email;
+    }
+
+    await signInWithEmailAndPassword(auth, email, password);
+
+    location.href = "index.html";
+
+  } catch {
+
+    msg.innerText = "Login inválido";
+    msg.className = "error";
+  }
 };
 
+window.logout = async function () {
 
-window.logout = function () {
-
-  signOut(auth)
-    .then(() => {
-      window.location.href = "index.html";
-    })
-    .catch(err => {
-      alert("Erro ao sair: " + err.message);
-    });
-
+  await signOut(auth);
+  location.href = "index.html";
 };
 
-
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
 
   const guest = document.getElementById("guest");
   const userBox = document.getElementById("user");
   const welcome = document.getElementById("welcome");
 
+  if (!guest || !userBox) return;
+
   if (user) {
 
-    if (guest) guest.style.display = "none";
-    if (userBox) userBox.style.display = "block";
+    const snap = await getDoc(doc(db, "users", user.uid));
 
-    if (welcome) {
-      welcome.innerText = "Bem-vindo, " + user.email;
+    let name = user.email;
+
+    if (snap.exists()) {
+      name = snap.data().nickname;
     }
+
+    guest.style.display = "none";
+    userBox.style.display = "block";
+
+    welcome.innerText = "Bem-vindo, " + name;
 
   } else {
 
-    if (guest) guest.style.display = "block";
-    if (userBox) userBox.style.display = "none";
-
+    guest.style.display = "block";
+    userBox.style.display = "none";
   }
-
 });
