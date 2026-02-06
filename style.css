@@ -14,6 +14,7 @@ body {
   border-radius: 16px;
   width: 500px;
   max-width: 95%; 
+  min-height: 420px;
   text-align: center;
 }
 
@@ -50,35 +51,6 @@ button:hover {
 .success {
   color: #22c55e;
   margin-top: 10px;
-}
-@media (max-width: 500px) {
-
-  body {
-    padding: 20px;
-  }
-
-  .box {
-    width: 100%;
-    padding: 35px;
-  }
-
-  h1, h2 {
-    font-size: 24px;
-  }
-
-  input {
-    padding: 14px;
-    font-size: 16px;
-  }
-
-  button {
-    padding: 14px;
-    font-size: 16px;
-  }
-
-  #welcome {
-    font-size: 16px;
-  }
 }
 
 .btn-secondary {
@@ -125,3 +97,40 @@ button:hover {
 .link:hover {
   text-decoration: underline;
 }
+
+@media (max-width: 600px) {
+
+  body {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .box {
+    width: 100%;
+    height: 100vh;
+    max-width: none;
+
+    border-radius: 0;
+    padding: 40px 25px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  h1, h2 {
+    font-size: 26px;
+  }
+
+  input,
+  button {
+    font-size: 17px;
+    padding: 16px;
+  }
+
+  .btn-back {
+    margin-top: 25px;
+  }
+}
+
+

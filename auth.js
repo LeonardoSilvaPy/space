@@ -50,6 +50,10 @@ function register() {
   saveUsers(users);
 
   showMsg("Cadastro realizado com sucesso", "success");
+
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 1000);
 }
 
 
