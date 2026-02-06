@@ -1,94 +1,98 @@
-function getUsers() {
-  return JSON.parse(localStorage.getItem("users")) || [];
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD8nX_cGZHHXB07IicXoNw2U2gbD_00cHY",
+  authDomain: "new-space-project.firebaseapp.com",
+  projectId: "new-space-project",
+  storageBucket: "new-space-project.firebasestorage.app",
+  messagingSenderId: "455628678631",
+  appId: "1:455628678631:web:0725827e5f19ea48f04942"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+
+function emailInput() {
+  return document.getElementById("email")?.value;
 }
 
-function saveUsers(users) {
-  localStorage.setItem("users", JSON.stringify(users));
+function passwordInput() {
+  return document.getElementById("password")?.value;
 }
 
-function getEmail() {
-  return document.getElementById("email")?.value.trim();
-}
 
-function getPassword() {
-  return document.getElementById("password")?.value.trim();
-}
+window.register = function () {
 
-function showMsg(text, type = "error") {
+  const email = emailInput();
+  const password = passwordInput();
+
   const msg = document.getElementById("msg");
-  if (!msg) return;
-
-  msg.className = type;
-  msg.innerText = text;
-}
-
-function goLogin() {
-  location.href = "login.html";
-}
-
-function goRegister() {
-  location.href = "login.html";
-}
-
-function register() {
-  const email = getEmail();
-  const password = getPassword();
 
   if (!email || !password) {
-    showMsg("Preencha todos os campos");
+    msg.innerText = "Preencha todos os campos";
+    msg.className = "error";
     return;
   }
 
-  const users = getUsers();
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(() => {
 
-  if (users.some(u => u.email === email)) {
-    showMsg("Usuário já existe");
-    return;
-  }
+      msg.innerText = "Cadastro realizado!";
+      msg.className = "success";
 
-  users.push({ email, password });
-  saveUsers(users);
+      setTimeout(() => {
+        location.href = "index.html";
+      }, 1200);
 
-  showMsg("Cadastro realizado com sucesso", "success");
+    })
+    .catch(err => {
 
-  setTimeout(() => {
-    window.location.href = "login.html";
-  }, 1000);
-}
+      msg.innerText = err.message;
+      msg.className = "error";
 
-
-function login() {
-  const email = getEmail();
-  const password = getPassword();
-
-  const users = getUsers();
-
-  const user = users.find(
-    u => u.email === email && u.password === password
-  );
-
-  if (!user) {
-    showMsg("Email ou senha inválidos");
-    return;
-  }
-
-  localStorage.setItem("loggedUser", email);
-
-  showMsg("Login realizado", "success");
-
-  setTimeout(() => {
-    location.href = "index.html";
-  }, 800);
-}
+    });
+};
 
 
-function logout() {
-  localStorage.removeItem("loggedUser");
-  location.reload();
-}
+window.login = function () {
 
-function checkAuth() {
-  const user = localStorage.getItem("loggedUser");
+  const email = emailInput();
+  const password = passwordInput();
+
+  const msg = document.getElementById("msg");
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      location.href = "index.html";
+    })
+    .catch(() => {
+
+      msg.innerText = "Email ou senha inválidos";
+      msg.className = "error";
+
+    });
+};
+
+
+window.logout = function () {
+  signOut(auth);
+};
+
+
+onAuthStateChanged(auth, user => {
 
   if (!user) return;
 
@@ -96,12 +100,11 @@ function checkAuth() {
   const userBox = document.getElementById("user");
   const welcome = document.getElementById("welcome");
 
-  if (!guest || !userBox || !welcome) return;
+  if (guest && userBox) {
 
-  guest.style.display = "none";
-  userBox.style.display = "block";
+    guest.style.display = "none";
+    userBox.style.display = "block";
 
-  welcome.innerText = "Bem-vindo, " + user;
-}
-
-checkAuth();
+    welcome.innerText = "Bem-vindo, " + user.email;
+  }
+});
