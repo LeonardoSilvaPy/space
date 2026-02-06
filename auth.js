@@ -6,9 +6,11 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  sendPasswordResetEmail
 } from
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 
 import {
   getFirestore,
@@ -150,6 +152,54 @@ async function logout() {
   location.href = "index.html";
 };
 
+async function forgotPassword() {
+
+  const login = get("login");
+  const msg = document.getElementById("msg");
+
+  if (!login) {
+    msg.innerText = "Digite seu email";
+    msg.className = "error";
+    return;
+  }
+
+  try {
+
+    let email = login;
+
+    if (!login.includes("@")) {
+
+      const q = query(
+        collection(db, "users"),
+        where("nickname", "==", login)
+      );
+
+      const snap = await getDocs(q);
+
+      if (snap.empty) {
+        msg.innerText = "Usuário não encontrado";
+        msg.className = "error";
+        return;
+      }
+
+      email = snap.docs[0].data().email;
+    }
+
+    await sendPasswordResetEmail(auth, email);
+
+    msg.innerText = "Email de recuperação enviado!";
+    msg.className = "success";
+
+  } catch (err) {
+
+    msg.innerText = "Erro ao enviar email";
+    msg.className = "error";
+
+    console.error(err);
+  }
+};
+
+
 onAuthStateChanged(auth, async user => {
 
   const guest = document.getElementById("guest");
@@ -183,4 +233,4 @@ onAuthStateChanged(auth, async user => {
 window.login = login;
 window.register = register;
 window.logout = logout;
-
+window.logout = forgotPassword;
