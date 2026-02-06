@@ -42,7 +42,7 @@ function get(id) {
   return document.getElementById(id)?.value;
 }
 
-window.register = async function () {
+async function register() {
 
   const nickname = get("nickname");
   const email = get("email");
@@ -98,7 +98,7 @@ window.register = async function () {
 };
 
 
-window.login = async function () {
+async function login() {
 
   const login = get("login");
   const password = get("password");
@@ -144,7 +144,7 @@ window.login = async function () {
   }
 };
 
-window.logout = async function () {
+async function logout() {
 
   await signOut(auth);
   location.href = "index.html";
@@ -179,3 +179,8 @@ onAuthStateChanged(auth, async user => {
     userBox.style.display = "none";
   }
 });
+
+window.login = login;
+window.register = register;
+window.logout = logout;
+
