@@ -117,7 +117,7 @@ button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 
   background: white;
   color: #1f2937;
@@ -140,10 +140,15 @@ button:hover {
 }
 
 .btn-google img {
-  width: 20px;
-  height: 20px;
-}
+  width: 18px !important;
+  height: 18px !important;
 
+  max-width: 18px;
+  max-height: 18px;
+
+  object-fit: contain;
+  display: block;
+}
 
 
 
