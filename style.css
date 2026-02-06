@@ -24,7 +24,7 @@ body {
 }
 
 input {
-  width: 100%;
+  width: 90%;
   margin: 10px 0;
   padding: 10px;
 }
@@ -51,7 +51,7 @@ button:hover {
 .error,
 .success {
   color: inherit;
-  margin-top: 25px;
+  margin-top: 35px;
   margin-bottom: 25px;
 }
 
@@ -146,7 +146,7 @@ button:hover {
   }
 
   .btn-back {
-    margin-top: 25px;
+    margin-top: 35px;
   }
 }
 
