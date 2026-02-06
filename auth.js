@@ -6,41 +6,56 @@ function saveUsers(users) {
   localStorage.setItem("users", JSON.stringify(users));
 }
 
+function getEmail() {
+  return document.getElementById("email")?.value.trim();
+}
+
+function getPassword() {
+  return document.getElementById("password")?.value.trim();
+}
+
+function showMsg(text, type = "error") {
+  const msg = document.getElementById("msg");
+  if (!msg) return;
+
+  msg.className = type;
+  msg.innerText = text;
+}
+
 function goLogin() {
-  window.location.href = "login.html";
+  location.href = "login.html";
 }
 
 function goRegister() {
-  window.location.href = "login.html";
+  location.href = "login.html";
 }
 
 function register() {
-  const email = emailInput();
-  const password = passwordInput();
-  const msg = document.getElementById("msg");
+  const email = getEmail();
+  const password = getPassword();
 
   if (!email || !password) {
-    msg.innerText = "Preencha tudo";
+    showMsg("Preencha todos os campos");
     return;
   }
 
   const users = getUsers();
 
-  if (users.find(u => u.email === email)) {
-    msg.innerText = "Usuário já existe";
+  if (users.some(u => u.email === email)) {
+    showMsg("Usuário já existe");
     return;
   }
 
   users.push({ email, password });
   saveUsers(users);
 
-  msg.innerText = "Cadastro realizado!";
+  showMsg("Cadastro realizado com sucesso", "success");
 }
 
+
 function login() {
-  const email = emailInput();
-  const password = passwordInput();
-  const msg = document.getElementById("msg");
+  const email = getEmail();
+  const password = getPassword();
 
   const users = getUsers();
 
@@ -49,18 +64,23 @@ function login() {
   );
 
   if (!user) {
-    msg.innerText = "Login inválido";
+    showMsg("Email ou senha inválidos");
     return;
   }
 
   localStorage.setItem("loggedUser", email);
 
-  window.location.href = "index.html";
+  showMsg("Login realizado", "success");
+
+  setTimeout(() => {
+    location.href = "index.html";
+  }, 800);
 }
+
 
 function logout() {
   localStorage.removeItem("loggedUser");
-  window.location.reload();
+  location.reload();
 }
 
 function checkAuth() {
@@ -68,19 +88,16 @@ function checkAuth() {
 
   if (!user) return;
 
-  document.getElementById("guest").style.display = "none";
-  document.getElementById("user").style.display = "block";
+  const guest = document.getElementById("guest");
+  const userBox = document.getElementById("user");
+  const welcome = document.getElementById("welcome");
 
-  document.getElementById("welcome").innerText =
-    "Bem-vindo, " + user;
-}
+  if (!guest || !userBox || !welcome) return;
 
-function emailInput() {
-  return document.getElementById("email")?.value;
-}
+  guest.style.display = "none";
+  userBox.style.display = "block";
 
-function passwordInput() {
-  return document.getElementById("password")?.value;
+  welcome.innerText = "Bem-vindo, " + user;
 }
 
 checkAuth();
