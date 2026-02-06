@@ -7,9 +7,12 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  GoogleAuthProvider,
+  signInWithPopup
 } from
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 
 
 import {
@@ -203,6 +206,34 @@ async function forgotPassword() {
 };
 
 
+const provider = new GoogleAuthProvider();
+
+async function loginWithGoogle() {
+  try {
+
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        uid: user.uid,
+        email: user.email,
+        nickname: user.displayName || "Usuário",
+        createdAt: Date.now()
+      });
+    }
+
+    location.href = "index.html";
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao entrar com Google");
+  }
+}
+
+
 onAuthStateChanged(auth, async user => {
 
   const guest = document.getElementById("guest");
@@ -237,3 +268,4 @@ window.login = login;
 window.register = register;
 window.logout = logout;
 window.forgotPassword = forgotPassword;
+window.loginWithGoogle = loginWithGoogle;
