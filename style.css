@@ -10,9 +10,10 @@ body {
 
 .box {
   background: #020617;
-  padding: 30px;
-  border-radius: 10px;
-  width: 300px;
+  padding: 50px;
+  border-radius: 16px;
+  width: 500px;
+  max-width: 95%; 
   text-align: center;
 }
 
@@ -58,7 +59,7 @@ button:hover {
 
   .box {
     width: 100%;
-    padding: 25px;
+    padding: 35px;
   }
 
   h1, h2 {
@@ -80,8 +81,6 @@ button:hover {
   }
 }
 
-
-
 .btn-secondary {
   background: transparent;
   border: 1px solid #2563eb;
@@ -94,6 +93,27 @@ button:hover {
   background: #2563eb;
   color: white;
 }
+
+.btn-back {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 10px 16px;
+  border-radius: 20px;
+
+  border: 1px solid #475569;
+  color: #cbd5f5;
+  text-decoration: none;
+  font-size: 14px;
+
+  transition: 0.2s;
+}
+
+.btn-back:hover {
+  background: #1e293b;
+  border-color: #2563eb;
+  color: white;
+}
+
 
 .link {
   display: block;
