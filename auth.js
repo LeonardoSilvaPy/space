@@ -88,17 +88,42 @@ window.login = function () {
 
 
 window.logout = function () {
-  signOut(auth);
+
+  signOut(auth)
+    .then(() => {
+      window.location.href = "index.html";
+    })
+    .catch(err => {
+      alert("Erro ao sair: " + err.message);
+    });
+
 };
 
 
 onAuthStateChanged(auth, user => {
 
-  if (!user) return;
-
   const guest = document.getElementById("guest");
   const userBox = document.getElementById("user");
   const welcome = document.getElementById("welcome");
+
+  if (user) {
+
+    if (guest) guest.style.display = "none";
+    if (userBox) userBox.style.display = "block";
+
+    if (welcome) {
+      welcome.innerText = "Bem-vindo, " + user.email;
+    }
+
+  } else {
+
+    if (guest) guest.style.display = "block";
+    if (userBox) userBox.style.display = "none";
+
+  }
+
+});
+
 
   if (guest && userBox) {
 
